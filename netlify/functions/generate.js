@@ -7,12 +7,12 @@ const modelMap = {
   'nano-banana-pro': 'gemini-2.5-flash-image-preview',
 };
 
-export default async (req) => {
-  if (req.httpMethod !== 'POST') return { statusCode: 405, body: 'Method not allowed' };
+export const handler = async (event) => {
+  if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method not allowed' };
 
   try {
     await initSchema();
-    const { prompt, model, ratio, referenceImageBase64 } = JSON.parse(req.body || '{}');
+    const { prompt, model, ratio, referenceImageBase64 } = JSON.parse(event.body || '{}');
     if (!prompt || !model || !ratio) {
       return { statusCode: 400, body: JSON.stringify({ error: 'prompt, model, ratio are required' }) };
     }
@@ -26,7 +26,7 @@ export default async (req) => {
     const contents = [{ role: 'user', parts: [{ text: `${getSystemPrompt(model)}\n\nPrompt: ${prompt}\nAspect ratio: ${ratio}` }] }];
 
     if (referenceImageBase64) {
-      contents[0].parts.push({ inline_data: { mime_type: 'image/png', data: referenceImageBase64 } });
+      contents[0].parts.push({ inlineData: { mimeType: 'image/png', data: referenceImageBase64 } });
     }
 
     const response = await fetch(
@@ -45,7 +45,6 @@ export default async (req) => {
     }
 
     const filename = `generated/${Date.now()}-${Math.random().toString(36).slice(2)}.png`;
-
     return {
       statusCode: 200,
       body: JSON.stringify({ imageUrl: `data:image/png;base64,${imagePart.inlineData.data}`, blobKey: filename, keySlot }),

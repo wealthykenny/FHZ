@@ -90,3 +90,10 @@ In production, add the Netlify Blobs SDK call in `netlify/functions/generate.js`
 - Keep all Gemini keys and admin credentials only in Netlify Environment Variables.
 - Do **not** hardcode secrets in frontend code.
 - Frontend currently calls serverless functions at `/.netlify/functions/*`.
+
+
+## Reliability fixes included
+
+- Netlify function handlers use `export const handler` for runtime compatibility.
+- Gemini image input uses the correct `inlineData` payload format for reference-image models.
+- UI includes stronger body-level gradient and dark-on-light text contrast to avoid a blank/washed-out experience.

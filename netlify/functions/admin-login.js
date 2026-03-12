@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
 
-export default async (req) => {
-  if (req.httpMethod !== 'POST') return { statusCode: 405, body: 'Method not allowed' };
+export const handler = async (event) => {
+  if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method not allowed' };
 
-  const { username, password } = JSON.parse(req.body || '{}');
+  const { username, password } = JSON.parse(event.body || '{}');
   if (username !== process.env.ADMIN_USERNAME || password !== process.env.ADMIN_PASSWORD) {
     return { statusCode: 401, body: JSON.stringify({ error: 'Invalid credentials' }) };
   }

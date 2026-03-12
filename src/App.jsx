@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 const models = [
   { key: 'fazon-realistic-pro', label: 'Fazon Realistic Pro', acceptsImage: true },
@@ -53,12 +53,14 @@ export default function App() {
     setLoading(true);
     setStatus('');
     try {
-      const referenceImageBase64 = referenceFile ? await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(String(reader.result).split(',')[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(referenceFile);
-      }) : '';
+      const referenceImageBase64 = referenceFile
+        ? await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(String(reader.result).split(',')[1]);
+            reader.onerror = reject;
+            reader.readAsDataURL(referenceFile);
+          })
+        : '';
       const res = await fetch('/.netlify/functions/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -88,12 +90,24 @@ export default function App() {
     }
   };
 
+  const saveToProfile = async (id) => {
+    const res = await fetch('/.netlify/functions/drafts', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    });
+    if (res.ok) {
+      setStatus('Saved to account profile.');
+      refreshDrafts();
+    }
+  };
+
   const deleteDraft = async (id) => {
     await fetch(`/.netlify/functions/drafts?id=${id}`, { method: 'DELETE' });
     refreshDrafts();
   };
 
-  const saveToDevice = async () => {
+  const saveToDevice = () => {
     if (!imageUrl) return;
     const link = document.createElement('a');
     link.href = imageUrl;
@@ -105,37 +119,48 @@ export default function App() {
     <main className="app-shell">
       <section className="glass hero">
         <h1>Flex4Genz</h1>
-        <p>Orange + white thick liquid-glass controls for fast, visible AI image generation.</p>
+        <p>Image studio with bold visible text, thick liquid-glass cards, and orange-white clarity.</p>
       </section>
 
       <section className="grid-layout">
         <article className="glass panel">
           <h2>Create</h2>
-          <label>Prompt text</label>
-          <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="Type what you want to generate" />
+          <label htmlFor="prompt">Prompt text</label>
+          <textarea
+            id="prompt"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="Type what you want to generate"
+          />
 
-          <label>Model</label>
-          <select value={model} onChange={(e) => setModel(e.target.value)}>
+          <label htmlFor="model">Model</label>
+          <select id="model" value={model} onChange={(e) => setModel(e.target.value)}>
             {models.map((m) => (
-              <option key={m.key} value={m.key}>{m.label}</option>
+              <option key={m.key} value={m.key}>
+                {m.label}
+              </option>
             ))}
           </select>
 
           <label>Aspect ratio</label>
           <div className="ratio-row">
             {aspectRatios.map((r) => (
-              <button key={r} className={`pill ${ratio === r ? 'active' : ''}`} onClick={() => setRatio(r)}>{r}</button>
+              <button type="button" key={r} className={`pill ${ratio === r ? 'active' : ''}`} onClick={() => setRatio(r)}>
+                {r}
+              </button>
             ))}
           </div>
 
           {selectedModel?.acceptsImage && (
             <>
-              <label>Reference image input (optional)</label>
-              <input type="file" accept="image/*" onChange={(e) => setReferenceFile(e.target.files?.[0] ?? null)} />
+              <label htmlFor="reference">Reference image input (optional)</label>
+              <input id="reference" type="file" accept="image/*" onChange={(e) => setReferenceFile(e.target.files?.[0] ?? null)} />
             </>
           )}
 
-          <button className="cta" onClick={generate} disabled={!prompt || loading}>Generate</button>
+          <button type="button" className="cta" onClick={generate} disabled={!prompt || loading}>
+            Generate
+          </button>
         </article>
 
         <article className="glass panel">
@@ -145,8 +170,12 @@ export default function App() {
           {!loading && !imageUrl && <p>Generated image appears here.</p>}
 
           <div className="button-row">
-            <button className="cta" onClick={saveDraft} disabled={!imageUrl}>Temporarily Save</button>
-            <button className="cta" onClick={saveToDevice} disabled={!imageUrl}>Save to Device</button>
+            <button type="button" className="cta" onClick={saveDraft} disabled={!imageUrl}>
+              Temporarily Save
+            </button>
+            <button type="button" className="cta" onClick={saveToDevice} disabled={!imageUrl}>
+              Save to Device
+            </button>
           </div>
           <p className="status">{status}</p>
         </article>
@@ -160,8 +189,12 @@ export default function App() {
               <img src={d.image_url} alt={d.prompt} />
               <p>{d.prompt}</p>
               <div className="button-row">
-                <button className="pill">Save to Account Profile</button>
-                <button className="pill" onClick={() => deleteDraft(d.id)}>Delete (if not posted)</button>
+                <button type="button" className="pill" onClick={() => saveToProfile(d.id)}>
+                  Save to Account Profile
+                </button>
+                <button type="button" className="pill" onClick={() => deleteDraft(d.id)}>
+                  Delete (if not posted)
+                </button>
               </div>
             </div>
           ))}
