@@ -1,0 +1,60 @@
+:root {
+  font-family: Inter, system-ui, sans-serif;
+  color: #fff;
+  background: radial-gradient(circle at top, #ff9b2f, #e25d07 50%, #7a2400);
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+
+.app-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.glass {
+  border-radius: 30px;
+  padding: 1rem;
+  backdrop-filter: blur(12px) saturate(160%);
+  background: linear-gradient(145deg, rgba(255,255,255,0.34), rgba(255,255,255,0.12));
+  border: 5px solid rgba(255,255,255,0.45);
+  box-shadow: inset 0 0 24px rgba(255,255,255,0.3), 0 16px 40px rgba(0,0,0,0.25);
+}
+
+.hero h1 { margin: 0; font-size: 2.3rem; }
+.hero p { font-size: 1.05rem; font-weight: 600; }
+.grid-layout { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+.panel h2 { margin-top: 0; }
+
+label { display: block; margin-top: .7rem; font-weight: 700; }
+textarea, select, input[type='file'] {
+  width: 100%; margin-top: .4rem; border-radius: 16px; border: 3px solid #fff; background: rgba(255,255,255,0.85);
+  color: #4c1800; padding: .7rem; font-size: 1rem;
+}
+textarea { min-height: 120px; }
+
+.ratio-row, .button-row { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .7rem; }
+.pill, .cta {
+  border-radius: 16px; border: 3px solid #fff; color: #fff; background: linear-gradient(#ff8f1f, #f1670b);
+  padding: .55rem .9rem; font-weight: 800; cursor: pointer;
+}
+.pill.active { outline: 3px solid #ffd7ae; }
+.cta:disabled { opacity: .45; cursor: not-allowed; }
+
+.output-image { width: 100%; border-radius: 16px; border: 4px solid #fff; }
+.status { min-height: 1.2rem; font-weight: 700; }
+.draft-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .8rem; }
+.draft img { width: 100%; border-radius: 14px; border: 3px solid #fff; }
+
+.robot-wrap { text-align: center; }
+.robot-body, .robot-head { fill: #fff; }
+.robot-eye { fill: #f36f10; }
+.robot-arm, .robot-leg { stroke: #fff; stroke-width: 8; stroke-linecap: round; }
+.robot-leg.left { animation: walk-left .6s infinite alternate; transform-origin: 37px 82px; }
+.robot-leg.right { animation: walk-right .6s infinite alternate; transform-origin: 72px 82px; }
+
+@keyframes walk-left { from { transform: rotate(18deg); } to { transform: rotate(-14deg); } }
+@keyframes walk-right { from { transform: rotate(-18deg); } to { transform: rotate(14deg); } }
